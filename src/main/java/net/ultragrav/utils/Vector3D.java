@@ -4,6 +4,8 @@ import net.ultragrav.serializer.GravSerializable;
 import net.ultragrav.serializer.GravSerializer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class Vector3D implements Comparable<Vector3D>, GravSerializable {
     public static final Vector3D ZERO = new Vector3D(0, 0, 0);
     public static final Vector3D UNIT_X = new Vector3D(1, 0, 0);
@@ -381,6 +383,11 @@ public class Vector3D implements Comparable<Vector3D>, GravSerializable {
             Vector3D other = (Vector3D) obj;
             return other.x == this.x && other.y == this.y && other.z == this.z;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z);
     }
 
     public int compareTo(@NotNull Vector3D other) {

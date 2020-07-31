@@ -6,6 +6,7 @@ import net.ultragrav.serializer.GravSerializable;
 import net.ultragrav.serializer.GravSerializer;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
@@ -303,6 +304,11 @@ public class IntVector3D implements Comparable<IntVector3D>, GravSerializable {
             IntVector3D other = (IntVector3D) obj;
             return other.x == this.x && other.y == this.y && other.z == this.z;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z);
     }
 
     public int compareTo(@Nullable IntVector3D other) {

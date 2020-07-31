@@ -6,6 +6,8 @@ import net.ultragrav.serializer.GravSerializer;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.Objects;
+
 @Getter
 public class IntVector2D implements GravSerializable {
     public static final IntVector2D ONE = new IntVector2D(1, 1);
@@ -56,6 +58,11 @@ public class IntVector2D implements GravSerializable {
         if (o instanceof IntVector2D)
             return ((IntVector2D) o).x == this.x && ((IntVector2D) o).y == this.y;
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 
     public IntVector3D toIntVector3D(int y) {
