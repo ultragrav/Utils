@@ -34,6 +34,10 @@ public class CuboidRegion implements GravSerializable {
         this.recalculate();
     }
 
+    public CuboidRegion(World world, IntVector3D pos1, IntVector3D pos2) {
+        this(world, pos1.asVector(), pos2.asVector());
+    }
+
     public CuboidRegion(GravSerializer serializer) {
         this.pos1 = serializer.readObject();
         this.pos2 = serializer.readObject();
@@ -103,11 +107,8 @@ public class CuboidRegion implements GravSerializable {
 
     public void expand(Vector3D... changes) {
         Preconditions.checkNotNull(changes);
-        Vector3D[] var2 = changes;
-        int var3 = changes.length;
 
-        for (int var4 = 0; var4 < var3; ++var4) {
-            Vector3D change = var2[var4];
+        for (Vector3D change : changes) {
             if (change.getX() > 0.0D) {
                 if (Math.max(this.pos1.getX(), this.pos2.getX()) == this.pos1.getX()) {
                     this.pos1 = this.pos1.add(new Vector3D(change.getX(), 0.0D, 0.0D));
@@ -150,11 +151,8 @@ public class CuboidRegion implements GravSerializable {
 
     public void contract(Vector3D... changes) {
         Preconditions.checkNotNull(changes);
-        Vector3D[] var2 = changes;
-        int var3 = changes.length;
 
-        for (int var4 = 0; var4 < var3; ++var4) {
-            Vector3D change = var2[var4];
+        for (Vector3D change : changes) {
             if (change.getX() < 0.0D) {
                 if (Math.max(this.pos1.getX(), this.pos2.getX()) == this.pos1.getX()) {
                     this.pos1 = this.pos1.add(new Vector3D(change.getX(), 0.0D, 0.0D));

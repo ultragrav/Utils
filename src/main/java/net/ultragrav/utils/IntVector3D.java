@@ -94,11 +94,9 @@ public class IntVector3D implements Comparable<IntVector3D>, GravSerializable {
         int newX = this.x;
         int newY = this.y;
         int newZ = this.z;
-        IntVector3D[] var8 = others;
         int var9 = others.length;
 
-        for (int var10 = 0; var10 < var9; ++var10) {
-            IntVector3D other = var8[var10];
+        for (IntVector3D other : others) {
             newX += other.x;
             newY += other.y;
             newZ += other.z;
@@ -119,10 +117,8 @@ public class IntVector3D implements Comparable<IntVector3D>, GravSerializable {
         int newX = this.x;
         int newY = this.y;
         int newZ = this.z;
-        int len = others.length;
 
-        for (int i = 0; i < len; ++i) {
-            IntVector3D other = others[i];
+        for (IntVector3D other : others) {
             newX -= other.x;
             newY -= other.y;
             newZ -= other.z;
@@ -143,10 +139,8 @@ public class IntVector3D implements Comparable<IntVector3D>, GravSerializable {
         int newX = this.x;
         int newY = this.y;
         int newZ = this.z;
-        int len = others.length;
 
-        for (int i = 0; i < len; ++i) {
-            IntVector3D other = others[i];
+        for (IntVector3D other : others) {
             newX *= other.x;
             newY *= other.y;
             newZ *= other.z;
@@ -329,6 +323,10 @@ public class IntVector3D implements Comparable<IntVector3D>, GravSerializable {
 
     public IntVector3D swapXZ() {
         return new IntVector3D(z, y, x);
+    }
+
+    public Vector3D asVector() {
+        return new Vector3D(getX(), getY(), getZ());
     }
 
     @Override
