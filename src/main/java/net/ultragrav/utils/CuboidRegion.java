@@ -241,6 +241,10 @@ public class CuboidRegion implements GravSerializable {
         return x >= min.getX() && x <= max.getX() && y >= min.getY() && y <= max.getY() && z >= min.getZ() && z <= max.getZ();
     }
 
+    public boolean contains(IntVector3D position) {
+        return contains(position.asVector());
+    }
+
     public Iterator<Vector3D> iterator() {
         return new Iterator<Vector3D>() {
             private final Vector3D min = CuboidRegion.this.getMinimumPoint();
