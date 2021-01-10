@@ -9,10 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
 
 @Getter
 @Setter
@@ -51,25 +49,25 @@ public class CuboidRegion implements GravSerializable {
     public int getArea() {
         Vector3D min = this.getMinimumPoint();
         Vector3D max = this.getMaximumPoint();
-        return (int)((max.getX() - min.getX() + 1.0D) * (max.getY() - min.getY() + 1.0D) * (max.getZ() - min.getZ() + 1.0D));
+        return (int) ((max.getX() - min.getX() + 1.0D) * (max.getY() - min.getY() + 1.0D) * (max.getZ() - min.getZ() + 1.0D));
     }
 
     public int getWidth() {
         Vector3D min = this.getMinimumPoint();
         Vector3D max = this.getMaximumPoint();
-        return (int)(max.getX() - min.getX() + 1.0D);
+        return (int) (max.getX() - min.getX() + 1.0D);
     }
 
     public int getHeight() {
         Vector3D min = this.getMinimumPoint();
         Vector3D max = this.getMaximumPoint();
-        return (int)(max.getY() - min.getY() + 1.0D);
+        return (int) (max.getY() - min.getY() + 1.0D);
     }
 
     public int getLength() {
         Vector3D min = this.getMinimumPoint();
         Vector3D max = this.getMaximumPoint();
-        return (int)(max.getZ() - min.getZ() + 1.0D);
+        return (int) (max.getZ() - min.getZ() + 1.0D);
     }
 
     private void recalculate() {
@@ -93,7 +91,7 @@ public class CuboidRegion implements GravSerializable {
         return Math.max(this.pos1.getBlockY(), this.pos2.getBlockY());
     }
 
-    public boolean intersectsChunk(int x, int z){
+    public boolean intersectsChunk(int x, int z) {
         Vector3D max = getMaximumPoint();
         Vector3D min = getMinimumPoint();
         int minI = min.getBlockX() >> 4;
@@ -303,10 +301,114 @@ public class CuboidRegion implements GravSerializable {
         return new CuboidRegion(world, origin.subtract(size), origin.add(size));
     }
 
+    public boolean intersects(Vector3D origin, Vector3D direction) {
+        return intersects(origin, direction, null, null);
+    }
+
+    public List<Vector3D> getIntersectionPoints(Vector3D origin, Vector3D direction) {
+        List<Vector3D> points = new ArrayList<>();
+        intersects(origin, direction, points::add, points::add);
+        return points;
+    }
+
+    private boolean intersects(Vector3D origin, Vector3D direction, Consumer<Vector3D> a, Consumer<Vector3D> b) {
+        direction = direction.normalize();
+        Vector3D invDirVector = new Vector3D(1 / direction.x, 1 / direction.y, 1 / direction.z);
+
+        Vector3D min = this.getMinimumPoint();
+        Vector3D max = this.getMaximumPoint();
+
+        double minX = (min.x - origin.x) * invDirVector.x;
+        double maxX = (max.x - origin.x) * invDirVector.x;
+
+        //Swap
+        if (minX > maxX) {
+            double t = minX;
+            minX = maxX;
+            maxX = t;
+        }
+
+        double minY = (min.y - origin.y) * invDirVector.y;
+        double maxY = (max.y - origin.y) * invDirVector.y;
+
+        //Swap
+        if (minY > maxY) {
+            double t = minY;
+            minY = maxY;
+            maxY = t;
+        }
+
+        if (minX > maxY || minY > maxX)
+            return false;
+
+        if (minY > minX)
+            minX = minY;
+
+        if (maxY < maxX)
+            maxX = maxY;
+
+        double minZ = (min.z - origin.z) * invDirVector.z;
+        double maxZ = (max.z - origin.z) * invDirVector.z;
+
+        //Swap
+        if (minZ > maxZ) {
+            double t = minZ;
+            minZ = maxZ;
+            maxZ = t;
+        }
+
+        if ((minX > maxZ) || (minZ > maxX))
+            return false;
+
+        if (minZ > minX) {
+            minX = minZ;
+        }
+        if (maxZ < maxX) {
+            maxX = maxZ;
+        }
+
+        if (a != null)
+            a.accept(direction.multiply(minX).add(origin));
+        if (b != null)
+            b.accept(direction.multiply(maxX).add(origin));
+
+        return true;
+    }
+
     @Override
     public void serialize(GravSerializer serializer) {
         serializer.writeObject(this.pos1);
         serializer.writeObject(this.pos2);
         serializer.writeString(this.world.getName());
+    }
+
+    public static void main(String[] args) {
+        int[] arr = new int[1];
+
+        arr[0] = 5;
+
+        Thread t = new Thread(() -> {
+            for(int i = 0; i < 100000; i++) {
+                int a = arr[0];
+                if(a != 5 && a != 2) {
+                    System.out.println("ERROR: arr[0] = " + a);
+                    System.exit(0);
+                }
+                if(i % 100 == 0) {
+                    System.out.println(a);
+                }
+            }
+
+            new Thread(() -> System.out.println("Arr[0] = " + arr[0])).start();
+        });
+        Thread t2 = new Thread(() -> {
+            for(int i = 0; i < 100000; i++) {
+                int a = arr[0];
+                arr[0] = a == 5 ? 2 : 5;
+            }
+            System.out.println("Ended");
+        });
+        t.start();
+        t2.start();
     }
 }
