@@ -375,6 +375,29 @@ public class CuboidRegion implements GravSerializable {
         return true;
     }
 
+    public CuboidRegion intersection(CuboidRegion other) {
+        Vector3D minThis = getMinimumPoint();
+        Vector3D minOther = other.getMinimumPoint();
+
+        Vector3D maxThis = getMaximumPoint();
+        Vector3D maxOther = other.getMaximumPoint();
+
+        double minX = Math.max(minThis.getX(), minOther.getX());
+        double minY = Math.max(minThis.getY(), minOther.getY());
+        double minZ = Math.max(minThis.getZ(), minOther.getZ());
+
+        double maxX = Math.min(maxThis.getX(), maxOther.getX());
+        double maxY = Math.min(maxThis.getY(), maxOther.getY());
+        double maxZ = Math.min(maxThis.getZ(), maxOther.getZ());
+
+        Vector3D newMin = new Vector3D(minX, minY, minZ);
+        Vector3D newMax = new Vector3D(maxX, maxY, maxZ);
+
+        CuboidRegion ret = new CuboidRegion(world, newMin, newMax);
+
+        return ret;
+    }
+
     @Override
     public void serialize(GravSerializer serializer) {
         serializer.writeObject(this.pos1);
