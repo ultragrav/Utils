@@ -9,7 +9,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.function.Consumer;
 
 @Getter
@@ -313,65 +319,34 @@ public class CuboidRegion implements GravSerializable {
 
     private boolean intersects(Vector3D origin, Vector3D direction, Consumer<Vector3D> a, Consumer<Vector3D> b) {
         direction = direction.normalize();
-        Vector3D invDirVector = new Vector3D(1 / direction.x, 1 / direction.y, 1 / direction.z);
+        Vector3D dirfrac = new Vector3D(1 / direction.x, 1 / direction.y, 1 / direction.z);
 
-        Vector3D min = this.getMinimumPoint();
-        Vector3D max = this.getMaximumPoint();
+        Vector3D lb = getMinimumPoint();
+        Vector3D rt = getMaximumPoint();
 
-        double minX = (min.x - origin.x) * invDirVector.x;
-        double maxX = (max.x - origin.x) * invDirVector.x;
+        double t1 = (lb.x - origin.x) * dirfrac.x;
+        double t2 = (rt.x - origin.x) * dirfrac.x;
+        double t3 = (lb.y - origin.y) * dirfrac.y;
+        double t4 = (rt.y - origin.y) * dirfrac.y;
+        double t5 = (lb.z - origin.z) * dirfrac.z;
+        double t6 = (rt.z - origin.z) * dirfrac.z;
 
-        //Swap
-        if (minX > maxX) {
-            double t = minX;
-            minX = maxX;
-            maxX = t;
-        }
+        double tmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)), Math.min(t5, t6));
+        double tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)), Math.max(t5, t6));
 
-        double minY = (min.y - origin.y) * invDirVector.y;
-        double maxY = (max.y - origin.y) * invDirVector.y;
+        double t;
 
-        //Swap
-        if (minY > maxY) {
-            double t = minY;
-            minY = maxY;
-            maxY = t;
-        }
-
-        if (minX > maxY || minY > maxX)
+        if (tmax < 0) {
             return false;
-
-        if (minY > minX)
-            minX = minY;
-
-        if (maxY < maxX)
-            maxX = maxY;
-
-        double minZ = (min.z - origin.z) * invDirVector.z;
-        double maxZ = (max.z - origin.z) * invDirVector.z;
-
-        //Swap
-        if (minZ > maxZ) {
-            double t = minZ;
-            minZ = maxZ;
-            maxZ = t;
         }
 
-        if ((minX > maxZ) || (minZ > maxX))
+        if (tmin > tmax) {
             return false;
-
-        if (minZ > minX) {
-            minX = minZ;
-        }
-        if (maxZ < maxX) {
-            maxX = maxZ;
         }
 
+        t = tmin;
         if (a != null)
-            a.accept(direction.multiply(minX).add(origin));
-        if (b != null)
-            b.accept(direction.multiply(maxX).add(origin));
-
+            a.accept(origin.add(direction.multiply(t)));
         return true;
     }
 
@@ -406,32 +381,17 @@ public class CuboidRegion implements GravSerializable {
     }
 
     public static void main(String[] args) {
-        int[] arr = new int[1];
+        for (int i = 0; i < 10;) {
 
-        arr[0] = 5;
+            //
 
-        Thread t = new Thread(() -> {
-            for(int i = 0; i < 100000; i++) {
-                int a = arr[0];
-                if(a != 5 && a != 2) {
-                    System.out.println("ERROR: arr[0] = " + a);
-                    System.exit(0);
-                }
-                if(i % 100 == 0) {
-                    System.out.println(a);
-                }
+            for (int j = 0; j < 10;) {
+                System.out.println(i + " " + j);
+                j++;
             }
 
-            new Thread(() -> System.out.println("Arr[0] = " + arr[0])).start();
-        });
-        Thread t2 = new Thread(() -> {
-            for(int i = 0; i < 100000; i++) {
-                int a = arr[0];
-                arr[0] = a == 5 ? 2 : 5;
-            }
-            System.out.println("Ended");
-        });
-        t.start();
-        t2.start();
+            //
+            i++;
+        }
     }
 }
