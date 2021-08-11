@@ -97,7 +97,7 @@ public class Vector3D implements Comparable<Vector3D>, GravSerializable {
     }
 
     public int getBlockX() {
-        return (int) Math.round(this.x);
+        return (int) this.x;
     }
 
     public double getY() {
@@ -113,7 +113,7 @@ public class Vector3D implements Comparable<Vector3D>, GravSerializable {
     }
 
     public int getBlockY() {
-        return (int) Math.round(this.y);
+        return (int) this.y;
     }
 
     public double getZ() {
@@ -129,7 +129,7 @@ public class Vector3D implements Comparable<Vector3D>, GravSerializable {
     }
 
     public int getBlockZ() {
-        return (int) Math.round(this.z);
+        return (int) this.z;
     }
 
     public Vector3D add(Vector3D other) {
