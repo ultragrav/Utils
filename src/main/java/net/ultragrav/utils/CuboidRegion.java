@@ -9,13 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import java.util.List;
 import java.util.function.Consumer;
 
 @Getter
@@ -24,6 +18,9 @@ public class CuboidRegion implements GravSerializable {
     private Vector3D pos1;
     private Vector3D pos2;
     private final World world;
+
+    private Vector3D min;
+    private Vector3D max;
 
     public CuboidRegion(Location pos1, Location pos2) {
         this(pos1.getWorld(), new Vector3D(pos1.getX(), pos1.getY(), pos1.getZ()), new Vector3D(pos2.getX(), pos2.getY(), pos2.getZ()));
@@ -82,11 +79,17 @@ public class CuboidRegion implements GravSerializable {
     }
 
     public Vector3D getMinimumPoint() {
-        return new Vector3D(Math.min(this.pos1.getX(), this.pos2.getX()), Math.min(this.pos1.getY(), this.pos2.getY()), Math.min(this.pos1.getZ(), this.pos2.getZ()));
+        if (this.min == null) {
+            this.min = new Vector3D(Math.min(this.pos1.getX(), this.pos2.getX()), Math.min(this.pos1.getY(), this.pos2.getY()), Math.min(this.pos1.getZ(), this.pos2.getZ()));
+        }
+        return this.min;
     }
 
     public Vector3D getMaximumPoint() {
-        return new Vector3D(Math.max(this.pos1.getX(), this.pos2.getX()), Math.max(this.pos1.getY(), this.pos2.getY()), Math.max(this.pos1.getZ(), this.pos2.getZ()));
+        if (this.max == null) {
+            this.max = new Vector3D(Math.max(this.pos1.getX(), this.pos2.getX()), Math.max(this.pos1.getY(), this.pos2.getY()), Math.max(this.pos1.getZ(), this.pos2.getZ()));
+        }
+        return this.max;
     }
 
     public int getMinimumY() {
@@ -378,20 +381,5 @@ public class CuboidRegion implements GravSerializable {
         serializer.writeObject(this.pos1);
         serializer.writeObject(this.pos2);
         serializer.writeString(this.world.getName());
-    }
-
-    public static void main(String[] args) {
-        for (int i = 0; i < 10;) {
-
-            //
-
-            for (int j = 0; j < 10;) {
-                System.out.println(i + " " + j);
-                j++;
-            }
-
-            //
-            i++;
-        }
     }
 }
