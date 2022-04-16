@@ -320,24 +320,22 @@ public class CuboidRegion implements GravSerializable {
         return points;
     }
 
-    private boolean intersects(Vector3D origin, Vector3D direction, Consumer<Vector3D> a, Consumer<Vector3D> b) {
+    private boolean intersects(Vector3D origin, Vector3D direction, Consumer<Vector3D> point1Consumer, Consumer<Vector3D> point2Consumer) {
         direction = direction.normalize();
-        Vector3D dirfrac = new Vector3D(1 / direction.x, 1 / direction.y, 1 / direction.z);
+        Vector3D invDir = new Vector3D(1 / direction.x, 1 / direction.y, 1 / direction.z);
 
-        Vector3D lb = getMinimumPoint();
-        Vector3D rt = getMaximumPoint();
+        Vector3D minimumPoint = getMinimumPoint();
+        Vector3D maximumPoint = getMaximumPoint();
 
-        double t1 = (lb.x - origin.x) * dirfrac.x;
-        double t2 = (rt.x - origin.x) * dirfrac.x;
-        double t3 = (lb.y - origin.y) * dirfrac.y;
-        double t4 = (rt.y - origin.y) * dirfrac.y;
-        double t5 = (lb.z - origin.z) * dirfrac.z;
-        double t6 = (rt.z - origin.z) * dirfrac.z;
+        double t1 = (minimumPoint.x - origin.x) * invDir.x;
+        double t2 = (maximumPoint.x - origin.x) * invDir.x;
+        double t3 = (minimumPoint.y - origin.y) * invDir.y;
+        double t4 = (maximumPoint.y - origin.y) * invDir.y;
+        double t5 = (minimumPoint.z - origin.z) * invDir.z;
+        double t6 = (maximumPoint.z - origin.z) * invDir.z;
 
         double tmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)), Math.min(t5, t6));
         double tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)), Math.max(t5, t6));
-
-        double t;
 
         if (tmax < 0) {
             return false;
@@ -347,9 +345,17 @@ public class CuboidRegion implements GravSerializable {
             return false;
         }
 
-        t = tmin;
-        if (a != null)
-            a.accept(origin.add(direction.multiply(t)));
+        Vector3D point1 = origin.add(direction.multiply(tmin));
+        Vector3D point2 = origin.add(direction.multiply(tmax));
+
+        if (point1Consumer != null) {
+            point1Consumer.accept(point1);
+        }
+
+        if (point2Consumer != null) {
+            point2Consumer.accept(point2);
+        }
+
         return true;
     }
 
@@ -371,9 +377,7 @@ public class CuboidRegion implements GravSerializable {
         Vector3D newMin = new Vector3D(minX, minY, minZ);
         Vector3D newMax = new Vector3D(maxX, maxY, maxZ);
 
-        CuboidRegion ret = new CuboidRegion(world, newMin, newMax);
-
-        return ret;
+        return new CuboidRegion(world, newMin, newMax);
     }
 
     @Override
