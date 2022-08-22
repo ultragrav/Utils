@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.ultragrav.serializer.GravSerializable;
 import net.ultragrav.serializer.GravSerializer;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
-public class IntVector3D implements Comparable<IntVector3D>, GravSerializable {
+public class IntVector3D implements GravSerializable {
     public static final IntVector3D ZERO = new IntVector3D();
     public static final IntVector3D UNIT_X = new IntVector3D(1, 0, 0);
     public static final IntVector3D UNIT_Y = new IntVector3D(0, 1, 0);
@@ -303,18 +303,6 @@ public class IntVector3D implements Comparable<IntVector3D>, GravSerializable {
     @Override
     public int hashCode() {
         return Objects.hash(x, y, z);
-    }
-
-    public int compareTo(@Nullable IntVector3D other) {
-        if (other == null) {
-            throw new IllegalArgumentException("null not supported");
-        } else if (this.y != other.y) {
-            return Double.compare(this.y, other.y);
-        } else if (this.z != other.z) {
-            return Double.compare(this.z, other.z);
-        } else {
-            return this.x != other.x ? Double.compare(this.x, other.x) : 0;
-        }
     }
 
     public String toString() {

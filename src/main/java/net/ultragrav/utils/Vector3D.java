@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class Vector3D implements Comparable<Vector3D>, GravSerializable {
+public class Vector3D implements GravSerializable {
     public static final Vector3D ZERO = new Vector3D(0, 0, 0);
     public static final Vector3D UNIT_X = new Vector3D(1, 0, 0);
     public static final Vector3D UNIT_Y = new Vector3D(0, 1, 0);
@@ -388,16 +388,6 @@ public class Vector3D implements Comparable<Vector3D>, GravSerializable {
     @Override
     public int hashCode() {
         return Objects.hash(x, y, z);
-    }
-
-    public int compareTo(@NotNull Vector3D other) {
-        if (this.y != other.y) {
-            return Double.compare(this.y, other.y);
-        } else if (this.z != other.z) {
-            return Double.compare(this.z, other.z);
-        } else {
-            return this.x != other.x ? Double.compare(this.x, other.x) : 0;
-        }
     }
 
     public String toString() {
