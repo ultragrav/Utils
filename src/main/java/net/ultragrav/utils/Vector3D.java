@@ -93,11 +93,11 @@ public class Vector3D implements GravSerializable {
     }
 
     public Vector3D setX(int x) {
-        return new Vector3D((double) x, this.y, this.z);
+        return new Vector3D(x, this.y, this.z);
     }
 
     public int getBlockX() {
-        return (int) this.x;
+        return NumberConversions.floor(this.x);
     }
 
     public double getY() {
@@ -109,11 +109,11 @@ public class Vector3D implements GravSerializable {
     }
 
     public Vector3D setY(int y) {
-        return new Vector3D(this.x, (double) y, this.z);
+        return new Vector3D(this.x, y, this.z);
     }
 
     public int getBlockY() {
-        return (int) this.y;
+        return NumberConversions.floor(this.y);
     }
 
     public double getZ() {
@@ -125,11 +125,11 @@ public class Vector3D implements GravSerializable {
     }
 
     public Vector3D setZ(int z) {
-        return new Vector3D(this.x, this.y, (double) z);
+        return new Vector3D(this.x, this.y, z);
     }
 
     public int getBlockZ() {
-        return (int) this.z;
+        return NumberConversions.floor(this.z);
     }
 
     public Vector3D add(Vector3D other) {
